@@ -206,6 +206,23 @@ tempCodeRunnerFile.py
 # Ruff stuff:
 .ruff_cache/
 
+# FloorPlan 3D runtime artifacts
+data/raw_pdfs/*
+!data/raw_pdfs/.gitkeep
+data/processed_images/*
+!data/processed_images/.gitkeep
+data/outputs/*
+!data/outputs/.gitkeep
+models/segmentation/*
+!models/segmentation/.gitkeep
+models/detection/*
+!models/detection/.gitkeep
+models/ocr/*
+!models/ocr/.gitkeep
+web/node_modules/
+web/dist/
+web/tsconfig.tsbuildinfo
+
 # PyPI configuration file
 .pypirc
 
