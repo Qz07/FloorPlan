@@ -8,3 +8,12 @@ def test_health_endpoint() -> None:
     response = client.get("/api/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
+
+
+def test_bad_upload_returns_400() -> None:
+    client = TestClient(app)
+    response = client.post(
+        "/api/projects",
+        files={"file": ("bad.jpg", b"not an image", "image/jpeg")},
+    )
+    assert response.status_code == 400

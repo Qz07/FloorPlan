@@ -20,6 +20,20 @@ Outputs are written to `data/outputs/{project_id}/`:
 - `floorplan.json`
 - `scene.glb`
 
+## YOLO Detection
+
+Place Ultralytics YOLO weights at `models/detection/best.pt`, or set:
+
+```bash
+export FLOORPLAN3D_YOLO_WEIGHTS=/path/to/best.pt
+export FLOORPLAN3D_YOLO_CONFIDENCE=0.4
+```
+
+When weights are available, the backend uses YOLO detections for `wall`, `door`,
+`sliding door`, and `window`. Wall boxes become 3D wall segments; door/window
+boxes become openings attached to the nearest detected wall. If no weights are
+present, the backend falls back to the heuristic wall extractor.
+
 ## Frontend
 
 ```bash

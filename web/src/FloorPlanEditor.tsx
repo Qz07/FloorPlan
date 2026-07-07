@@ -37,6 +37,15 @@ export function FloorPlanEditor({ floorplan, selectedWallId, onSelectWall, onWal
             onSelectWall={onSelectWall}
           />
         ))}
+        {floorplan.openings.map((opening) => (
+          <circle
+            key={opening.id}
+            cx={opening.position[0]}
+            cy={opening.position[1]}
+            r={Math.max(opening.width / 4, 0.06)}
+            className={opening.kind === "window" ? "opening-marker window" : "opening-marker door"}
+          />
+        ))}
       </svg>
       {selectedWall ? (
         <div className="inspector">

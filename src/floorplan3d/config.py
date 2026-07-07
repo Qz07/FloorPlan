@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -10,6 +11,9 @@ RAW_DIR = DATA_DIR / "raw_pdfs"
 PROCESSED_DIR = DATA_DIR / "processed_images"
 OUTPUT_DIR = DATA_DIR / "outputs"
 MODEL_DIR = ROOT_DIR / "models"
+DEFAULT_YOLO_MODEL_PATH = MODEL_DIR / "detection" / "best.pt"
+YOLO_MODEL_PATH = Path(os.getenv("FLOORPLAN3D_YOLO_WEIGHTS", DEFAULT_YOLO_MODEL_PATH))
+YOLO_CONFIDENCE = float(os.getenv("FLOORPLAN3D_YOLO_CONFIDENCE", "0.4"))
 
 
 def ensure_runtime_dirs() -> None:

@@ -10,8 +10,20 @@ from typing import Optional
 
 from PIL import Image
 
-from floorplan3d.config import PROCESSED_DIR, RAW_DIR, ensure_runtime_dirs, project_dir
-from floorplan3d.detection import StubObjectDetector, infer_openings
+from floorplan3d.config import (
+    PROCESSED_DIR,
+    RAW_DIR,
+    YOLO_CONFIDENCE,
+    YOLO_MODEL_PATH,
+    ensure_runtime_dirs,
+    project_dir,
+)
+from floorplan3d.detection import (
+    YOLOObjectDetector,
+    attach_openings_to_nearest_walls,
+    infer_openings,
+    walls_from_symbols,
+)
 from floorplan3d.geometry_solver import GeometrySolver
 from floorplan3d.ocr import TesseractOCRModel
 from floorplan3d.pdf_loader import load_floorplan
@@ -37,13 +49,23 @@ def process_file(
     Image.fromarray(image).save(image_path)
 
     segmentation = HeuristicSegmentationModel()
-    detector = StubObjectDetector()
+    detector = YOLOObjectDetector(
+        weights_path=YOLO_MODEL_PATH,
+        confidence=YOLO_CONFIDENCE,
+        labels=("wall", "door", "sliding door", "window"),
+    )
     ocr = TesseractOCRModel()
     solver = GeometrySolver()
 
     wall_mask = segmentation.predict_wall_mask(image)
     symbols = detector.detect(image)
     labels = ocr.extract_text(image)
+    yolo_walls = walls_from_symbols(symbols, pixels_per_meter=solver.pixels_per_meter)
+    walls = yolo_walls or solver.solve_walls(wall_mask)
+    openings = attach_openings_to_nearest_walls(
+        infer_openings(symbols, pixels_per_meter=solver.pixels_per_meter),
+        walls,
+    )
     rooms = solver.solve_rooms(wall_mask)
     if labels and rooms:
         rooms[0].label = labels[0]
@@ -55,8 +77,8 @@ def process_file(
             page=page,
             image_size=(int(image.shape[1]), int(image.shape[0])),
         ),
-        walls=solver.solve_walls(wall_mask),
-        openings=infer_openings(symbols),
+        walls=walls,
+        openings=openings,
         rooms=rooms,
         symbols=symbols,
     )

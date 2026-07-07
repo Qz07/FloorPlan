@@ -12,6 +12,7 @@ from typing import Any, AsyncIterator, Dict
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from PIL import UnidentifiedImageError
 
 from floorplan3d.config import ensure_runtime_dirs, project_dir
 from floorplan3d.pipeline import process_file, read_floorplan, write_project_outputs
@@ -47,12 +48,15 @@ async def create_project(file: UploadFile = File(...)) -> Dict[str, Any]:
         shutil.copyfileobj(file.file, temp_file)
         temp_path = Path(temp_file.name)
     try:
-        floorplan = process_file(
-            temp_path,
-            filename=file.filename,
-            content_type=file.content_type or "application/octet-stream",
-            project_id=project_id,
-        )
+        try:
+            floorplan = process_file(
+                temp_path,
+                filename=file.filename,
+                content_type=file.content_type or "application/octet-stream",
+                project_id=project_id,
+            )
+        except (UnidentifiedImageError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
     finally:
         temp_path.unlink(missing_ok=True)
     return {

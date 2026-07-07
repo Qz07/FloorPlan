@@ -31,6 +31,8 @@ class Opening:
     kind: str
     position: Point2D
     width: float = 0.9
+    height: float = 2.1
+    sill_height: float = 0.0
     wall_id: Optional[str] = None
 
 
@@ -47,6 +49,7 @@ class Symbol:
     kind: str
     bbox: Tuple[float, float, float, float]
     confidence: float = 0.0
+    source_label: Optional[str] = None
 
 
 @dataclass

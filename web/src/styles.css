@@ -124,6 +124,19 @@ button:disabled,
   stroke: #c84c31;
 }
 
+.opening-marker {
+  stroke: #fff;
+  stroke-width: 0.04;
+}
+
+.opening-marker.door {
+  fill: #b87943;
+}
+
+.opening-marker.window {
+  fill: #4fa4d8;
+}
+
 .inspector {
   align-items: center;
   border-top: 1px solid #e5e9ee;

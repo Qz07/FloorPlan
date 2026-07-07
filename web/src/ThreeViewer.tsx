@@ -101,4 +101,22 @@ function addFloorPlan(scene: THREE.Scene, floorplan: FloorPlan) {
     mesh.rotation.y = -Math.atan2(dz, dx);
     scene.add(mesh);
   }
+
+  for (const opening of floorplan.openings) {
+    const material = new THREE.MeshStandardMaterial({
+      color: opening.kind === "window" ? 0x4fa4d8 : 0xb87943,
+      transparent: true,
+      opacity: opening.kind === "window" ? 0.62 : 0.78
+    });
+    const mesh = new THREE.Mesh(
+      new THREE.BoxGeometry(Math.max(opening.width, 0.1), Math.max(opening.height, 0.1), 0.04),
+      material
+    );
+    mesh.position.set(
+      opening.position[0],
+      opening.sill_height + opening.height / 2,
+      opening.position[1]
+    );
+    scene.add(mesh);
+  }
 }

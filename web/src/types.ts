@@ -12,6 +12,8 @@ export interface Opening {
   kind: string;
   position: Point2D;
   width: number;
+  height: number;
+  sill_height: number;
   wall_id?: string | null;
 }
 
